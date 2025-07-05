@@ -1,0 +1,6 @@
+nombre,encargado,horario,edadMinima,lugar,cupo,permiteMenores
+Fútbol Infantil,Juan Pérez,Martes 17hs,6,Cancha Norte,20,true
+Yoga Adultos,Ana García,Lunes y Jueves 19hs,18,Sala 2,15,false
+Natación Niños,Carlos Gómez,Miércoles 10hs,5,Pileta Cubierta,10,true
+Zumba,Alejandra López,Viernes 18hs,16,Sala 1,25,true
+Boxeo,Martín Suárez,Sábados 9hs,10,Cancha Este,12,false
