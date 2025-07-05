@@ -1,5 +1,6 @@
 package backEnd.controller;
 
+import backEnd.DTOs.SocioDTO;
 import backEnd.entities.Socio;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/socios")
-@Tag(name = "Socios", description = "Operaciones relacionadas con socios")
+@Tag(name = "Club Deportivo API", description = "API Club Deportivo (1.0.0)")
 public class SocioController {
 
     @Autowired
@@ -28,11 +29,15 @@ public class SocioController {
 
     // GET /socios?apellido=...&edad=...
     @GetMapping
-    @Operation(
-            summary = "Listar socios con filtros",
-            description = "Permite obtener un listado de todos los socios registrados en el club con la posibilidad de aplicar filtros para refinar la búsqueda.",
+    // --- Socios ---
+
+    @Operation(summary = "Listar socios con filtros",
+            parameters = {
+                    @Parameter(name = "apellido", description = "Apellido del socio", schema = @Schema(type = "string")),
+                    @Parameter(name = "edad", description = "Edad del socio", schema = @Schema(type = "integer"))
+            },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Listado de socios filtrado correctamente")
+                    @ApiResponse(responseCode = "200", description = "Lista de socios")
             }
     )
     public ResponseEntity<List<Socio>> listarSociosByPharams(
@@ -45,21 +50,18 @@ public class SocioController {
     }
 
     // POST /socios
-    @PostMapping
-    @Operation(
-            summary = "Alta de un socio",
-            description = "Permite dar de alta a socios sin confirmación. Requiere los datos completos del socio en formato JSON según el esquema Socio.",
+
+    @Operation(summary = "Alta de socio",
             requestBody = @RequestBody(
                     required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = Socio.class)
-                    )
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SocioDTO.class))
             ),
             responses = {
-                    @ApiResponse(responseCode = "201", description = "Socio creado exitosamente")
+                    @ApiResponse(responseCode = "201", description = "Socio creado")
             }
     )
+    @PostMapping
     public ResponseEntity<Socio> agregarSocio(@Valid @RequestBody Socio socio) {
         Socio nuevo = socioService.agregarSocio(socio);
         return ResponseEntity.ok(nuevo);
@@ -67,15 +69,15 @@ public class SocioController {
 
 
     // GET /socios/{dni}
-    @GetMapping("/{dni}")
-    @Operation(
-            summary = "Consultar socio por DNI",
-            description = "Realiza consultas partiendo del DNI del socio. El DNI no debe estar con puntos.",
+    @Operation(summary = "Consultar socio por DNI",
+            parameters = {
+                    @Parameter(name = "dni", description = "DNI del socio", required = true)
+            },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Socio encontrado"),
-                    @ApiResponse(responseCode = "404", description = "Socio no encontrado")
+                    @ApiResponse(responseCode = "200", description = "Socio encontrado")
             }
     )
+    @GetMapping("/{dni}")
     public ResponseEntity<Socio> obtenerSocioByDNI(@PathVariable String dni) {
         Socio socio = socioService.obtenerSocioByDNI(dni);
         if (socio != null) {
@@ -85,15 +87,16 @@ public class SocioController {
         }
     }
 
-    @DeleteMapping("/{dni}")
-    @Operation(
-            summary = "Baja de socio",
-            description = "Permite eliminar un socio del sistema del club de forma permanente.",
+
+    @Operation(summary = "Baja de socio",
+            parameters = {
+                    @Parameter(name = "dni", description = "DNI del socio", required = true)
+            },
             responses = {
-                    @ApiResponse(responseCode = "204", description = "Socio eliminado correctamente"),
-                    @ApiResponse(responseCode = "404", description = "Socio no encontrado")
+                    @ApiResponse(responseCode = "204", description = "Socio eliminado")
             }
     )
+    @DeleteMapping("/{dni}")
     public ResponseEntity<Void> eliminarSocioByDNI(@PathVariable String dni) {
         boolean eliminado = socioService.eliminarSocioByDNI(dni);
         if (eliminado) {

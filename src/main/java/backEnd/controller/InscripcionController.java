@@ -11,17 +11,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/inscripcion")
-@Tag(name = "Inscripción", description = "Operaciones relacionadas con inscripciones de socios a actividades")
+@Tag(name = "Inscripciones", description = "Gestión de inscripciones a actividades")
 public class InscripcionController {
 
     @Autowired
     private InscripcionService inscripcionService;
 
     @Operation(
-            summary = "Verifica si un socio puede inscribirse a una actividad",
-            description = "Devuelve `true` si el socio con el DNI proporcionado puede inscribirse a la actividad especificada. En caso contrario, devuelve `false`.",
+            summary = "Verificar inscripción",
+            description = "Verifica si un socio puede inscribirse a una actividad según los requisitos.",
+            parameters = {
+                    @Parameter(name = "dni", description = "DNI del socio", required = true, example = "34567890"),
+                    @Parameter(name = "actividad", description = "Nombre de la actividad", required = true, example = "Boxeo")
+            },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Verificación realizada correctamente"),
+                    @ApiResponse(responseCode = "200", description = "Resultado de la verificación"),
                     @ApiResponse(responseCode = "400", description = "Parámetros inválidos"),
                     @ApiResponse(responseCode = "500", description = "Error interno del servidor")
             }
